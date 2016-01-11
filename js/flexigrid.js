@@ -162,7 +162,9 @@
 						cdpos = 0;
 					}
 					$('div:eq(' + n + ')', g.cDrag).css({
-						'left': (!(browser.mozilla) ? cdpos - cdcounter : cdpos) + 'px'
+						/* 額外加上 n , 修正校對線的位置不正確 */
+						'left': ((!(browser.mozilla) ? cdpos - cdcounter : cdpos) + n) + 'px'
+
 					}).show();
 					cdleft = cdpos;
 					cdcounter++;
@@ -652,6 +654,7 @@
 						param[param.length] = p.params[pi];
 					}
 				}
+				var self = this;
 				$.ajax({
 					type: p.method,
 					url: p.url,
@@ -661,6 +664,10 @@
 						g.addData(data);
 					},
 					error: function (XMLHttpRequest, textStatus, errorThrown) {
+						$('.pReload', self.pDiv).removeClass('loading');
+						$('.pPageStat', self.pDiv).html(p.errormsg);
+						$(g.block).remove();
+						self.loading = false;
 						try {
 							if (p.onError) p.onError(XMLHttpRequest, textStatus, errorThrown);
 						} catch (e) {}
